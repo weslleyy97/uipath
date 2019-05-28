@@ -1,13 +1,4 @@
-<Activity mc:Ignorable="sap sap2010" x:Class="downloadArquivos" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-  <x:Members>
-    <x:Property Name="qntdFiles" Type="InArgument(x:Int32)" />
-    <x:Property Name="pathFile" Type="InArgument(x:String)" />
-  </x:Members>
-  <mva:VisualBasic.Settings>
-    <x:Null />
-  </mva:VisualBasic.Settings>
-  <sap:VirtualizedContainerService.HintSize>428,1710</sap:VirtualizedContainerService.HintSize>
-  <sap2010:WorkflowViewState.IdRef>downloadArquivos_1</sap2010:WorkflowViewState.IdRef>
+<Activity mc:Ignorable="sap sap2010" x:Class="downloadArquivos" mva:VisualBasic.Settings="{x:Null}" sap:VirtualizedContainerService.HintSize="428,1622" sap2010:WorkflowViewState.IdRef="downloadArquivos_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <TextExpression.NamespacesForImplementation>
     <scg:List x:TypeArguments="x:String" Capacity="42">
       <x:String>System.Activities</x:String>
@@ -53,9 +44,12 @@
       <AssemblyReference>UiPath.System.Activities</AssemblyReference>
       <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
       <AssemblyReference>UiPath.FTP.Activities</AssemblyReference>
+      <AssemblyReference>System.ServiceModel</AssemblyReference>
+      <AssemblyReference>UiPath.Excel</AssemblyReference>
+      <AssemblyReference>UiPath.Mail</AssemblyReference>
     </scg:List>
   </TextExpression.ReferencesForImplementation>
-  <Sequence DisplayName="downloadArquivos" sap:VirtualizedContainerService.HintSize="388,1630" sap2010:WorkflowViewState.IdRef="Sequence_1">
+  <Sequence DisplayName="downloadArquivos" sap:VirtualizedContainerService.HintSize="388,1502" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <Sequence.Variables>
       <Variable x:TypeArguments="sd:DataTable" Name="fileExists" />
       <Variable x:TypeArguments="x:Int32" Default="0" Name="contador" />
@@ -66,21 +60,13 @@
       </scg:Dictionary>
     </sap:WorkflowViewStateService.ViewState>
     <ui:EnumerateFiles KeyFiles="{x:Null}" DisplayName="Enumerate files" Files="[fileExists]" sap:VirtualizedContainerService.HintSize="366,87" Host="FTPASP.MXM.COM.BR" sap2010:WorkflowViewState.IdRef="EnumerateFiles_1" IncludeSubdirectories="False" Password="99467372Wes" Port="21" RemotePath="/Processados" SecureFTP="False" Username="weslley.goncalves" />
-    <Assign sap:VirtualizedContainerService.HintSize="366,60" sap2010:WorkflowViewState.IdRef="Assign_2">
-      <Assign.To>
-        <OutArgument x:TypeArguments="x:Int32">[contador]</OutArgument>
-      </Assign.To>
-      <Assign.Value>
-        <InArgument x:TypeArguments="x:Int32">[qntdFiles]</InArgument>
-      </Assign.Value>
-    </Assign>
-    <ui:ForEachRow CurrentIndex="{x:Null}" DataTable="[fileExists]" DisplayName="Baixar, Remover, Uploda e Mover" sap:VirtualizedContainerService.HintSize="366,1279" sap2010:WorkflowViewState.IdRef="ForEachRow_1">
+    <ui:ForEachRow CurrentIndex="{x:Null}" DataTable="[fileExists]" DisplayName="Baixar, Remover, Uploda e Mover" sap:VirtualizedContainerService.HintSize="366,1251" sap2010:WorkflowViewState.IdRef="ForEachRow_1">
       <ui:ForEachRow.Body>
         <ActivityAction x:TypeArguments="sd:DataRow">
           <ActivityAction.Argument>
             <DelegateInArgument x:TypeArguments="sd:DataRow" Name="row" />
           </ActivityAction.Argument>
-          <Sequence DisplayName="Body" sap:VirtualizedContainerService.HintSize="336,1131" sap2010:WorkflowViewState.IdRef="Sequence_2">
+          <Sequence DisplayName="Body" sap:VirtualizedContainerService.HintSize="336,1103" sap2010:WorkflowViewState.IdRef="Sequence_2">
             <Sequence.Variables>
               <Variable x:TypeArguments="ui:GenericValue" Name="message" />
               <Variable x:TypeArguments="ui:GenericValue" Name="LOG" />
@@ -100,7 +86,6 @@
               </Assign.Value>
             </Assign>
             <ui:LogMessage DisplayName="Retorna substring antes do aparecimento da virgula" sap:VirtualizedContainerService.HintSize="314,91" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[message.Substring(0, message.IndexOf(&quot;,&quot;))]" />
-            <ui:WriteCell Cell="[&quot;A&quot; + (contador + 1).ToString]" DisplayName="Write Cell" sap:VirtualizedContainerService.HintSize="314,115" sap2010:WorkflowViewState.IdRef="WriteCell_1" SheetName="Planilha1" Text="[message.Substring(0, message.IndexOf(&quot;,&quot;))]" WorkbookPath="C:\Users\weslley.goncalves\Documents\UiPath\Assignment1.1\configFTP.xlsx" />
             <Assign sap:VirtualizedContainerService.HintSize="314,60" sap2010:WorkflowViewState.IdRef="Assign_3">
               <Assign.To>
                 <OutArgument x:TypeArguments="x:Int32">[contador]</OutArgument>
@@ -159,6 +144,7 @@
             </Delay>
             <ui:Upload KeyFiles="{x:Null}" NotUploadedFiles="{x:Null}" UploadedFiles="{x:Null}" sap:VirtualizedContainerService.HintSize="314,115" Host="FTPASP.MXM.COM.BR" sap2010:WorkflowViewState.IdRef="Upload_1" LocalPath="[String.Join(&quot;,&quot;, Directory.GetFiles(&quot;C:\Users\weslley.goncalves\Documents\UiPath\Assignment1.1\PreEntrada&quot;))]" Password="99467372Wes" Port="21" RemotePath="/ProcessadosBaixados/" SecureFTP="False" Username="weslley.goncalves" />
             <ui:MoveFile ContinueOnError="{x:Null}" Destination="C:\Users\weslley.goncalves\Documents\ProjctFTP\Entrada" DisplayName="Move File" sap:VirtualizedContainerService.HintSize="314,22" sap2010:WorkflowViewState.IdRef="MoveFile_3" Overwrite="False" Path="[String.Join(&quot;,&quot;, Directory.GetFiles(&quot;C:\Users\weslley.goncalves\Documents\UiPath\Assignment1.1\PreEntrada&quot;))]" />
+            <ui:AppendLine DisplayName="Append Line" FileName="logArquivosBaixados.txt" sap:VirtualizedContainerService.HintSize="314,87" sap2010:WorkflowViewState.IdRef="AppendLine_1" Text="[String.Join(&quot;,&quot;, Directory.GetFiles(&quot;C:\Users\weslley.goncalves\Documents\UiPath\Assignment1.1\PreEntrada&quot;))]" />
           </Sequence>
         </ActivityAction>
       </ui:ForEachRow.Body>
