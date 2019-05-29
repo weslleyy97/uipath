@@ -1,4 +1,14 @@
-<Activity mc:Ignorable="sap sap2010" x:Class="downloadArquivos" mva:VisualBasic.Settings="{x:Null}" sap:VirtualizedContainerService.HintSize="428,1622" sap2010:WorkflowViewState.IdRef="downloadArquivos_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<Activity mc:Ignorable="sap sap2010" x:Class="downloadArquivos" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data" xmlns:ss="clr-namespace:System.Security;assembly=mscorlib" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="password" Type="InArgument(ss:SecureString)" />
+    <x:Property Name="username" Type="InArgument(x:String)" />
+    <x:Property Name="hostName" Type="InArgument(x:String)" />
+  </x:Members>
+  <mva:VisualBasic.Settings>
+    <x:Null />
+  </mva:VisualBasic.Settings>
+  <sap:VirtualizedContainerService.HintSize>428,1722</sap:VirtualizedContainerService.HintSize>
+  <sap2010:WorkflowViewState.IdRef>downloadArquivos_1</sap2010:WorkflowViewState.IdRef>
   <TextExpression.NamespacesForImplementation>
     <scg:List x:TypeArguments="x:String" Capacity="42">
       <x:String>System.Activities</x:String>
@@ -23,6 +33,8 @@
       <x:String>UiPath.Core.Activities</x:String>
       <x:String>System.Windows.Markup</x:String>
       <x:String>UiPath.FTP.Activities</x:String>
+      <x:String>System.Security</x:String>
+      <x:String>System.Net</x:String>
     </scg:List>
   </TextExpression.NamespacesForImplementation>
   <TextExpression.ReferencesForImplementation>
@@ -49,17 +61,26 @@
       <AssemblyReference>UiPath.Mail</AssemblyReference>
     </scg:List>
   </TextExpression.ReferencesForImplementation>
-  <Sequence DisplayName="downloadArquivos" sap:VirtualizedContainerService.HintSize="388,1502" sap2010:WorkflowViewState.IdRef="Sequence_1">
+  <Sequence DisplayName="downloadArquivos" sap:VirtualizedContainerService.HintSize="388,1602" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <Sequence.Variables>
       <Variable x:TypeArguments="sd:DataTable" Name="fileExists" />
       <Variable x:TypeArguments="x:Int32" Default="0" Name="contador" />
+      <Variable x:TypeArguments="x:String" Name="secure" />
     </Sequence.Variables>
     <sap:WorkflowViewStateService.ViewState>
       <scg:Dictionary x:TypeArguments="x:String, x:Object">
         <x:Boolean x:Key="IsExpanded">True</x:Boolean>
       </scg:Dictionary>
     </sap:WorkflowViewStateService.ViewState>
-    <ui:EnumerateFiles KeyFiles="{x:Null}" DisplayName="Enumerate files" Files="[fileExists]" sap:VirtualizedContainerService.HintSize="366,87" Host="FTPASP.MXM.COM.BR" sap2010:WorkflowViewState.IdRef="EnumerateFiles_1" IncludeSubdirectories="False" Password="99467372Wes" Port="21" RemotePath="/Processados" SecureFTP="False" Username="weslley.goncalves" />
+    <Assign sap:VirtualizedContainerService.HintSize="366,60" sap2010:WorkflowViewState.IdRef="Assign_4">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[secure]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">[new system.Net.NetworkCredential(string.Empty, password).Password]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <ui:EnumerateFiles KeyFiles="{x:Null}" DisplayName="Enumerate files" Files="[fileExists]" sap:VirtualizedContainerService.HintSize="366,87" Host="[hostName]" sap2010:WorkflowViewState.IdRef="EnumerateFiles_1" IncludeSubdirectories="False" Password="[secure]" Port="21" RemotePath="/Processados" SecureFTP="False" Username="[username]" />
     <ui:ForEachRow CurrentIndex="{x:Null}" DataTable="[fileExists]" DisplayName="Baixar, Remover, Uploda e Mover" sap:VirtualizedContainerService.HintSize="366,1251" sap2010:WorkflowViewState.IdRef="ForEachRow_1">
       <ui:ForEachRow.Body>
         <ActivityAction x:TypeArguments="sd:DataRow">
@@ -94,9 +115,9 @@
                 <InArgument x:TypeArguments="x:Int32">[contador + 1]</InArgument>
               </Assign.Value>
             </Assign>
-            <ui:Download DownloadedFiles="{x:Null}" KeyFiles="{x:Null}" NotDownloadedFiles="{x:Null}" sap:VirtualizedContainerService.HintSize="314,115" Host="FTPASP.MXM.COM.BR" sap2010:WorkflowViewState.IdRef="Download_2" LocalPath="C:\Users\weslley.goncalves\Documents\UiPath\Assignment1.1\PreEntrada" Password="99467372Wes" Port="21" RemotePath="[message.Substring(0, message.IndexOf(&quot;,&quot;))]" SecureFTP="False" Username="weslley.goncalves" />
-            <ui:RemoveFile KeyFiles="{x:Null}" DisplayName="Remove file" sap:VirtualizedContainerService.HintSize="314,87" Host="FTPASP.MXM.COM.BR" sap2010:WorkflowViewState.IdRef="RemoveFile_1" Password="99467372Wes" Port="21" RemotePath="[message.Substring(0, message.IndexOf(&quot;,&quot;))]" SecureFTP="False" Username="weslley.goncalves" />
-            <Delay mva:VisualBasic.Settings="{x:Null}" DisplayName="Delay 10 seconds" Duration="00:00:10" sap:VirtualizedContainerService.HintSize="314,22" sap2010:WorkflowViewState.IdRef="Delay_1">
+            <ui:Download DownloadedFiles="{x:Null}" KeyFiles="{x:Null}" NotDownloadedFiles="{x:Null}" sap:VirtualizedContainerService.HintSize="314,115" Host="[hostName]" sap2010:WorkflowViewState.IdRef="Download_2" LocalPath="C:\Users\weslley.goncalves\Documents\ProjctFTP\PreDownload" Password="[secure]" Port="21" RemotePath="[message.Substring(0, message.IndexOf(&quot;,&quot;))]" SecureFTP="False" Username="[username]" />
+            <ui:RemoveFile KeyFiles="{x:Null}" DisplayName="Remove file" sap:VirtualizedContainerService.HintSize="314,87" Host="[hostName]" sap2010:WorkflowViewState.IdRef="RemoveFile_1" Password="[secure]" Port="21" RemotePath="[message.Substring(0, message.IndexOf(&quot;,&quot;))]" SecureFTP="False" Username="[username]" />
+            <Delay mva:VisualBasic.Settings="{x:Null}" DisplayName="Delay 10 seconds" Duration="00:00:15" sap:VirtualizedContainerService.HintSize="314,22" sap2010:WorkflowViewState.IdRef="Delay_1">
               <TextExpression.Namespaces>
                 <sco:Collection x:TypeArguments="x:String">
                   <x:String>System.Activities</x:String>
@@ -142,9 +163,9 @@
                 </sap2010:ViewStateManager>
               </sap2010:WorkflowViewState.ViewStateManager>
             </Delay>
-            <ui:Upload KeyFiles="{x:Null}" NotUploadedFiles="{x:Null}" UploadedFiles="{x:Null}" sap:VirtualizedContainerService.HintSize="314,115" Host="FTPASP.MXM.COM.BR" sap2010:WorkflowViewState.IdRef="Upload_1" LocalPath="[String.Join(&quot;,&quot;, Directory.GetFiles(&quot;C:\Users\weslley.goncalves\Documents\UiPath\Assignment1.1\PreEntrada&quot;))]" Password="99467372Wes" Port="21" RemotePath="/ProcessadosBaixados/" SecureFTP="False" Username="weslley.goncalves" />
-            <ui:MoveFile ContinueOnError="{x:Null}" Destination="C:\Users\weslley.goncalves\Documents\ProjctFTP\Entrada" DisplayName="Move File" sap:VirtualizedContainerService.HintSize="314,22" sap2010:WorkflowViewState.IdRef="MoveFile_3" Overwrite="False" Path="[String.Join(&quot;,&quot;, Directory.GetFiles(&quot;C:\Users\weslley.goncalves\Documents\UiPath\Assignment1.1\PreEntrada&quot;))]" />
-            <ui:AppendLine DisplayName="Append Line" FileName="logArquivosBaixados.txt" sap:VirtualizedContainerService.HintSize="314,87" sap2010:WorkflowViewState.IdRef="AppendLine_1" Text="[String.Join(&quot;,&quot;, Directory.GetFiles(&quot;C:\Users\weslley.goncalves\Documents\UiPath\Assignment1.1\PreEntrada&quot;))]" />
+            <ui:Upload KeyFiles="{x:Null}" NotUploadedFiles="{x:Null}" UploadedFiles="{x:Null}" sap:VirtualizedContainerService.HintSize="314,115" Host="[hostName]" sap2010:WorkflowViewState.IdRef="Upload_1" LocalPath="[String.Join(&quot;,&quot;, Directory.GetFiles(&quot;C:\Users\weslley.goncalves\Documents\ProjctFTP\PreDownload&quot;))]" Password="[secure]" Port="21" RemotePath="/ProcessadosBaixados/" SecureFTP="False" Username="[username]" />
+            <ui:MoveFile ContinueOnError="{x:Null}" Destination="C:\Users\weslley.goncalves\Documents\ProjctFTP\Entrada" DisplayName="Move File" sap:VirtualizedContainerService.HintSize="314,22" sap2010:WorkflowViewState.IdRef="MoveFile_3" Overwrite="False" Path="[String.Join(&quot;,&quot;, Directory.GetFiles(&quot;C:\Users\weslley.goncalves\Documents\ProjctFTP\PreDownload&quot;)).ToString]" />
+            <ui:AppendLine DisplayName="Append Line" FileName="logArquivosBaixados.txt" sap:VirtualizedContainerService.HintSize="314,87" sap2010:WorkflowViewState.IdRef="AppendLine_1" Text="[String.Join(&quot;,&quot;, Directory.GetFiles(&quot;C:\Users\weslley.goncalves\Documents\ProjctFTP\PreDownload&quot;))]" />
           </Sequence>
         </ActivityAction>
       </ui:ForEachRow.Body>
